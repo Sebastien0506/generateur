@@ -1,0 +1,18 @@
+{% extends "base.html.twig" %}
+
+{% block h1 %}Ajouter des Contrats{% endblock %}
+
+{% block body %}
+
+    {{ form_start(formContrat) }}
+          {{ form_row(formContrat.type_contrat) }}
+
+          <button type="submit" class="btn">Ajouter</button>
+    {{ form_end(formContrat) }}
+
+
+
+
+
+
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html.twig" %}
+
+{% block h1 %} Ajouter des employer {% endblock %}
+
+{% block body %}
+
+<div class="">
+    {{ form_start(formUser) }}
+        {{ form_row(formUser.nom) }}
+        {{ form_row(formUser.prenom) }}
+        {{ form_row(formUser.email) }}
+        {{ form_row(formUser.password) }}
+    <div class="d-flex justify-content-around mt-4">
+        {{ form_row(formUser.roles) }}
+        {{ form_row(formUser.badge) }}
+        {{ form_row(formUser.age) }}
+        {{ form_row(formUser.contrat) }}
+    </div>
+    
+        <button type="submit" class="btn">Ajouter</button>
+    {{ form_end(formUser) }}
+</div>
+
+{% endblock %}

@@ -1,0 +1,17 @@
+body{
+    background-color:antiquewhite;
+}
+header nav {
+    display: flex;
+    justify-content: space-between;
+}
+ul {
+    list-style: none;
+    font-size: 1.5em;
+}
+.back{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin-top: 5%;
+}
