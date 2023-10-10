@@ -5,19 +5,19 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
-use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Email;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelper;
+
 
 #[Route('/user')]
 class UserController extends AbstractController
@@ -34,7 +34,7 @@ class UserController extends AbstractController
 
 
     #[Route("/ajouter_user", name: "ajouter_user")]
-    public function ajouter_employer(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $userPasswordHasher, MailerInterface $mailer, ResetPasswordHelper $resetPasswordHelper): Response
+    public function ajouter_employer(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $userPasswordHasher, MailerInterface $mailer): Response
     {
         $user = new User;
 
@@ -71,28 +71,25 @@ class UserController extends AbstractController
                     $form->get('password')->getData() 
                 )
             );
-            // dd($user);
-           
+            
             $em->persist($user);
 
             $em->flush();
             
-            $resetToken = $resetPasswordHelper->generateResetToken($user);
+            $link = $this->generateUrl('app_forgot_password_request', [], UrlGeneratorInterface::ABSOLUTE_URL);
+            $email = (new Email())
+            ->from('hello@example.com')
+            ->to('you@example.com')
+            //->cc('cc@example.com')
+            //->bcc('bcc@example.com')
+            //->replyTo('fabien@example.com')
+            //->priority(Email::PRIORITY_HIGH)
+            ->subject('Ajoue d\'employer')
+            ->text('Sending emails is fun again!')
+            ->html('<p>Vous venez d\'être ajouté au générateur de planning. Veuillez cliquer sur le lien pour réinitialisez votre mot de passe <a href="' . $link .'">lien</a></p>');
 
-            $resetLink = $this->generateUrl('app_forgot_password_request', [
-                'token' => $resetToken->getTokenValue()
-            ], UrlGeneratorInterface::ABSOLUTE_URL);
-
+        $mailer->send($email);
              
-            
-            
-
-
-            
-
-
-            
-
             return $this->redirectToRoute('ajouter_user');
 
         }
