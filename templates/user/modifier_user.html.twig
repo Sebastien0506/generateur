@@ -1,0 +1,22 @@
+{% extends "base.html.twig" %}
+
+{% block h1 %} Modifier employer{% endblock %}
+
+{% block body %}
+
+<div class="">
+    {{ form_start(form) }}
+        {{ form_row(form.nom) }}
+        {{ form_row(form.prenom) }}
+        {{ form_row(form.email) }}
+    <div class="d-flex justify-content-around mt-4">
+        {{ form_row(form.badge) }}
+        {{ form_row(form.age) }}
+        {{ form_row(form.contrat) }}
+    </div>
+    
+        <button type="submit" class="btn">Modifier</button>
+    {{ form_end(form) }}
+</div>
+
+{% endblock %}

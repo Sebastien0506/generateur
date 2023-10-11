@@ -4,19 +4,20 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
-use App\Repository\UserRepository;
+use App\Form\UserEditType;
 use Symfony\Component\Mime\Email;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelper;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
-use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelper;
 
 
 #[Route('/user')]
@@ -25,7 +26,7 @@ class UserController extends AbstractController
     #[Route("/employer", name: "employer")]
     public function employer(UserRepository $userRepository): Response
     {
-        
+        //Ce code permet de recuperer l'ensemble des employer pour l'administrateur
 
         return $this->render('user/employer.html.twig', [
             'users' => $userRepository->findAll()
@@ -38,12 +39,9 @@ class UserController extends AbstractController
     {
         $user = new User;
 
-      
         $form = $this->createForm(UserType::class);
         
         $form->handleRequest($request);
-
-        
 
         //On ajoute l'employer
         if($form->isSubmitted() && $form->isValid()){
@@ -57,7 +55,6 @@ class UserController extends AbstractController
             $age = $form->get('age')->getData();
             $contrat = $form->get('contrat')->getData();
 
-            
             $user->setEmail($email);
             $user->setRoles([$role]);
             $user->setNom($nom);
@@ -93,17 +90,52 @@ class UserController extends AbstractController
             return $this->redirectToRoute('ajouter_user');
 
         }
-
-        //On envoi l'email a l'employer
-        
-
-        
         return $this->render('user/ajouter_user.html.twig', [
             'formUser' => $form->createView()
         ]);
     }
 
+    #[Route("/modifier/{id}", name:"modifier_user")]
+    public function modifier_user(int $id, Request $request, User $user, EntityManagerInterface $em): Response
+    {
+      
+    
+   
+    if(!$user){
+        throw $this->createNotFoundException(('Employer non trouvé'));
+    }
 
+      $form = $this->createForm(UserEditType::class, $user);
+
+      $form->handleRequest($request);
+
+      if($form->isSubmitted() && $form->isValid())
+      {
+        $email = $form->get('email')->getData();
+        $nom = $form->get('nom')->getData();
+        $prenom = $form->get('prenom')->getData();
+        $badge = $form->get('badge')->getData();
+        $age = $form->get('age')->getData();
+        $contrat = $form->get('contrat')->getData();
+
+        $user->setEmail($email);
+        $user->setNom($nom);
+        $user->setPrenom($prenom);
+        $user->setBadge($badge);
+        $user->setAge($age);
+        $user->setContrat($contrat);
+
+        $em->persist($user);
+        $em->flush();
+
+        $this->addFlash('success', "Employer modifier avec succès");
+
+        return $this->redirectToRoute('employer');
+      }
+      return $this->render("user/modifier_user.html.twig", [
+        "form" => $form->createView()
+      ]);
+    }
     #[Route("/delete/{id}", name: "delete_user")]
     public function delete_user($id, UserRepository $userRepository, EntityManagerInterface $em): Response
     {
@@ -125,7 +157,23 @@ class UserController extends AbstractController
         // return new Response("Utilisateur supprimer avec succès.", 200);
 
         return $this->redirectToRoute("employer", []);
+    }
 
-
+    #[Route("/user", name: "user")]
+    public function user(): Response
+    {
+        return $this->render('profil/profile.html.twig', [
+            'controller_name' => 'UserController',
+        ]);
+    }
+    #[Route("/information", name: "information_user")]
+    public function information_user():Response
+    {
+        //Ce code permet de recuperer l'utilisateur connecter et d'afficher tout ces information
+        $user = $this->getUser();
+       
+        return $this->render('profil/information.html.twig', [
+            'user' => $user
+        ]);
     }
 }
