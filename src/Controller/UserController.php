@@ -16,6 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelper;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 
@@ -54,7 +55,10 @@ class UserController extends AbstractController
             $badge = $form->get('badge')->getData();
             $age = $form->get('age')->getData();
             $contrat = $form->get('contrat')->getData();
+            $heureDebut = $form->get('horaireDebut')->getData();
+            $heureFin = $form->get('horaireFin')->getData();
 
+            // dd($heureDebut, $heureFin);
             $user->setEmail($email);
             $user->setRoles([$role]);
             $user->setNom($nom);
@@ -68,6 +72,32 @@ class UserController extends AbstractController
                     $form->get('password')->getData() 
                 )
             );
+            $user->setHoraireDebut($heureDebut);
+            $user->setHoraireFin($heureFin);
+            if($age === "no"){
+                $heureDebut = $form->get('horaireDebut')->getData();
+                $heureFin = $form->get('horaireFin')->getData();
+
+                if($heureDebut->format('H:i') < '06:00' || $heureFin->format('H:i') > '21:00'){
+                    $this->addFlash('error', 'L\'employer est mineur il ne peut donc pas travailler avant 06h00 et après 21h00.');
+
+                    return $this->render('user/ajouter_user.html.twig', [
+                        'formUser' => $form->createView()
+                    ]);
+                }
+            }
+            $intervalle = $heureDebut->diff($heureFin);
+// dd($intervalle);
+            //Convertir cette intervalle en heure total
+            $heureTotales = $intervalle->h + ($intervalle->i / 60);
+// dd($heureTotales);
+            if($heureTotales > 8){
+                $this->addFlash('error', 'La duré total de travail dépasse 8h.');
+
+                return $this->render('user/ajouter_user.html.twig', [
+                    'formUser' => $form->createView()
+                ]);
+            }
             
             $em->persist($user);
 
@@ -90,6 +120,7 @@ class UserController extends AbstractController
             return $this->redirectToRoute('ajouter_user');
 
         }
+        $this->addFlash('success', "L'employer a été ajouté avec succès.");
         return $this->render('user/ajouter_user.html.twig', [
             'formUser' => $form->createView()
         ]);
@@ -145,7 +176,7 @@ class UserController extends AbstractController
 
         if(!$user){
             //On affiche les message d'erreur si l'utilisateur n'existe pas
-            return new Response("L'utilisateur n'existe pas." . $id, 404);
+            return new Response("L'utilisateur n'existe pas.");
         }
 
         

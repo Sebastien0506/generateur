@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Boutique{% endblock %}
+
+{% block body %}
+    <h1 class="text-center mt-4 mb-4">Boutique</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                
+                <th>Nom de la boutique</th>
+                <th>Horaire d'ouverture</th>
+                <th>Horaire de fermeture</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for boutique in boutiques %}
+            <tr>
+                <td>{{ boutique.nomBoutique }}</td>
+                <td>{{ boutique.horaireOuverture }}</td>
+                <td>{{ boutique.horaireFermeture }}</td>
+                <td>
+                    <a href="{{ path('app_boutique_show', {'id': boutique.id}) }}">information</a>
+                    <a href="{{ path('app_boutique_edit', {'id': boutique.id}) }}">editer</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_boutique_new') }}">Ajouter une nouvelle boutique</a>
+{% endblock %}

@@ -3,13 +3,16 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(fields: ['email'], message: 'Un compte existe déja avec cette email.')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -49,6 +52,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $resetToken = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Vacance::class)]
+    private Collection $vacances;
+
+    #[ORM\Column(type: Types::TIME_MUTABLE)]
+    private ?\DateTimeInterface $horaireDebut = null;
+
+    #[ORM\Column(type: Types::TIME_MUTABLE)]
+    private ?\DateTimeInterface $horaireFin = null;
+
+    public function __construct()
+    {
+        
+    }
 
     public function getId(): ?int
     {
@@ -203,6 +220,67 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Vacance>
+     */
+    public function getVacances(): Collection
+    {
+        return $this->vacances;
+    }
+
+    public function addVacance(Vacance $vacance): static
+    {
+        if (!$this->vacances->contains($vacance)) {
+            $this->vacances->add($vacance);
+            $vacance->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVacance(Vacance $vacance): static
+    {
+        if ($this->vacances->removeElement($vacance)) {
+            // set the owning side to null (unless already changed)
+            if ($vacance->getUser() === $this) {
+                $vacance->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getHoraireDebut(): ?\DateTimeInterface
+    {
+        return $this->horaireDebut;
+    }
+
+    public function setHoraireDebut(\DateTimeInterface $horaireDebut): static
+    {
+        $this->horaireDebut = $horaireDebut;
+
+        return $this;
+    }
+
+    public function getHoraireFin(): ?\DateTimeInterface
+    {
+        return $this->horaireFin;
+    }
+
+    public function setHoraireFin(\DateTimeInterface $horaireFin): static
+    {
+        $this->horaireFin = $horaireFin;
+
+        return $this;
+    }
+
+   
+    
+
+   
+
+    
 
    
 

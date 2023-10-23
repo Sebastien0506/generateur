@@ -14,6 +14,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -114,6 +115,23 @@ class UserType extends AbstractType
                    ])
                 ]
             ])
+            ->add('horaireDebut', TimeType::class, [
+                'label' => 'Horaire de début',
+                'constraints' => [
+                    new NotBlank([
+                        'message' => "Veuillez saisir une heure de début."
+                    ])
+                ]
+            ])
+            ->add('horaireFin', TimeType::class, [
+                'label' => 'Horaire de fin',
+                'constraints' => [
+                    new NotBlank([
+                        'message' => "Veuillez saisir une heure de fin."
+                    ])
+                ]
+            ])
+            
         ;
     }
 

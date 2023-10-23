@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Vacance{% endblock %}
+
+{% block body %}
+    <h1>Posez des vacances</h1>
+
+    {{ include('vacance/_form.html.twig') }}
+
+    <a href="{{ path('app_vacance_index') }}">Retour</a>
+{% endblock %}

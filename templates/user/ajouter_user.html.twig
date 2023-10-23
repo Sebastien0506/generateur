@@ -2,7 +2,16 @@
 
 {% block h1 %} Ajouter des employer {% endblock %}
 
+
 {% block body %}
+
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="flash-{{ label }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
 
 <div class="">
     {{ form_start(formUser) }}
@@ -10,6 +19,8 @@
         {{ form_row(formUser.prenom) }}
         {{ form_row(formUser.email) }}
         {{ form_row(formUser.password) }}
+        {{ form_row(formUser.horaireDebut) }}
+        {{ form_row(formUser.horaireFin) }}
     <div class="d-flex justify-content-around mt-4">
         {{ form_row(formUser.roles) }}
         {{ form_row(formUser.badge) }}
