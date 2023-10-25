@@ -3,13 +3,15 @@
 namespace App\Form;
 
 use App\Entity\Contrat;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class ContratType extends AbstractType
 {
@@ -19,8 +21,8 @@ class ContratType extends AbstractType
             ->add('type_contrat', ChoiceType::class, [
                 'label' => "Type de contrat:",
                 'choices' => [
-                   'CDI' => 'cdi',
-                   'CDD' => 'cdd',
+                   'CDI' => 'CDI',
+                   'CDD' => 'CDD',
                    'Étudiant' => "etudiant",
                    'Saisonnier' => 'saisonnier',
                 ],
@@ -28,6 +30,7 @@ class ContratType extends AbstractType
                 
             ])
             // ->add('jour_travail_max')
+            
         ;
     }
 

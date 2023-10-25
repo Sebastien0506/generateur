@@ -26,10 +26,43 @@
         {{ form_row(formUser.badge) }}
         {{ form_row(formUser.age) }}
         {{ form_row(formUser.contrat) }}
+        {{ form_row(formUser.debut) }}
+        {{ form_row(formUser.fin) }}
     </div>
     
         <button type="submit" class="btn">Ajouter</button>
     {{ form_end(formUser) }}
 </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var typeContratRadios = document.querySelectorAll('input[name="user[contrat]"]');
+        var dateDebutField = document.querySelector('#user_debut').parentNode;
+        var dateFinField = document.querySelector('#user_fin').parentNode;
+
+        typeContratRadios.forEach(function(radio){
+            radio.addEventListener('change', toggleDateField);
+        });
+       function toggleDateField() {
+    var selectedValue;
+    typeContratRadios.forEach(function(radio) {
+        if (radio.checked) {
+            selectedValue = radio.value;
+        }
+    });
+
+    if (selectedValue === '2') {  // Supposons que '2' représente 'cdd'
+        dateDebutField.style.display = 'block';
+        dateFinField.style.display = 'block';
+    } else {
+        dateDebutField.style.display = 'none';
+        dateFinField.style.display = 'none';
+    }
+}
+
+        toggleDateField();
+    });
+
+  </script>
 
 {% endblock %}
