@@ -134,8 +134,8 @@ class UserType extends AbstractType
                     ])
                 ]
             ])
-            ->add('debut', DateType::class)
-            ->add('fin', DateType::class)
+            ->add('dateDebut', DateType::class)
+            ->add('dateFin', DateType::class)
             ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
                 $user = $event->getData();
                 $form = $event->getForm();
@@ -147,6 +147,9 @@ class UserType extends AbstractType
                     $form->add('debut', DateType::class);
                     $form->add('fin', DateType::class);
                 }
+                elseif($user->getTypeContrat() === 'cdi'){
+                    $form->add('debut', DateType::class);
+                }
             })
             ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
                 $user = $event->getData();
@@ -156,10 +159,17 @@ class UserType extends AbstractType
                     return;
                 }
         
-                if (isset($user['typeContrat']) && $user['typeContrat'] === 'cdd') {
-                    $form->add('debut', DateType::class);
-                    $form->add('fin', DateType::class);
+                if (isset($user['type_contrat'])) {
+                    if ($user['type_contrat'] === 'cdd'){
+                        $form->add('debut', DateType::class);
+                        $form->add('fin', DateType::class);
+                    }
+                    elseif ($user['type_contrat'] === 'cdi'){
+                        $form->add('debut', DateType::class);
+                        $user['dateFin'] = null;
+                    }
                 }
+               
             })
             ->getForm();
             

@@ -57,7 +57,8 @@ class UserController extends AbstractController
             $contrat = $form->get('contrat')->getData();
             $heureDebut = $form->get('horaireDebut')->getData();
             $heureFin = $form->get('horaireFin')->getData();
-
+            $debut = $form->get('dateDebut')->getData();
+            $fin = $form->get('dateFin')->getData();
             // dd($heureDebut, $heureFin);
             $user->setEmail($email);
             $user->setRoles([$role]);
@@ -74,6 +75,13 @@ class UserController extends AbstractController
             );
             $user->setHoraireDebut($heureDebut);
             $user->setHoraireFin($heureFin);
+            $user->setDateDebut($debut);
+            $user->setDateFin($fin);
+
+            if($user->getContrat()->getTypeContrat() === 'cdi'){
+                $user->setDateFin(null);
+            }
+            // dd($user);
             if($age === "no"){
                 $heureDebut = $form->get('horaireDebut')->getData();
                 $heureFin = $form->get('horaireFin')->getData();
