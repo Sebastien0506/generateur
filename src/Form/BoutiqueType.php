@@ -4,10 +4,11 @@ namespace App\Form;
 
 use App\Entity\Boutique;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TimeType;
 
 class BoutiqueType extends AbstractType
 {
@@ -25,22 +26,17 @@ class BoutiqueType extends AbstractType
                     ])
                 ]
             ])
-            ->add('horaire_ouverture', TextType::class, [
+            ->add('horaireDebut', TimeType::class, [
                 'label' => "Horaire d'ouverture de la boutique",
-                'attr' => [
-                    "class" => "form-control"
-                ],
+                
                 'constraints' => [
                     new NotBlank([
                         "message" => "Veuillez saisir les horaire d'ouverture de la boutique",
                     ])
                 ]
             ]) 
-            ->add('horaire_fermeture', TextType::class, [
+            ->add('horaireFin', TimeType::class, [
                 'label' => 'Horaire de fermeture',
-                'attr' => [
-                    "class" => "form-control"
-                ],
                 'constraints' => [
                     new NotBlank([
                         "message" => "Veuillez saisir les horaire de fermeture de la boutique",

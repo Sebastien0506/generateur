@@ -2,12 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Boutique;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Form\UserEditType;
 use Symfony\Component\Mime\Email;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use SebastianBergmann\CodeCoverage\Report\Html\Renderer;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
@@ -24,7 +26,7 @@ use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 #[Route('/user')]
 class UserController extends AbstractController
 {
-    #[Route("/employer", name: "employer")]
+    #[Route("/employer", name: "employer", methods:['GET'])]
     public function employer(UserRepository $userRepository): Response
     {
         //Ce code permet de recuperer l'ensemble des employer pour l'administrateur
@@ -59,7 +61,9 @@ class UserController extends AbstractController
             $heureFin = $form->get('horaireFin')->getData();
             $debut = $form->get('dateDebut')->getData();
             $fin = $form->get('dateFin')->getData();
-            // dd($heureDebut, $heureFin);
+            $jour = $form->get('jourTravail')->getData();
+            
+            
             $user->setEmail($email);
             $user->setRoles([$role]);
             $user->setNom($nom);
@@ -77,12 +81,19 @@ class UserController extends AbstractController
             $user->setHoraireFin($heureFin);
             $user->setDateDebut($debut);
             $user->setDateFin($fin);
+            $user->setJourTravail($jour);
+            
+            foreach($form->get('boutique')->getData() as $boutique){
+                $user->addBoutique($boutique);
+            }
 
             if($user->getContrat()->getTypeContrat() === 'cdi'){
                 $user->setDateFin(null);
             }
-            // dd($user);
+           
             if($age === "no"){
+                //Ce code permet de vérifier si l'employer qui est ajouté est mineur si il est mineur et que l'heure début se trouve avant 6h et l'heure de fin se trouve après 21h
+                //un message s'affcihe disant que l'employer est mineur 
                 $heureDebut = $form->get('horaireDebut')->getData();
                 $heureFin = $form->get('horaireFin')->getData();
 
@@ -94,19 +105,32 @@ class UserController extends AbstractController
                     ]);
                 }
             }
-            $intervalle = $heureDebut->diff($heureFin);
-// dd($intervalle);
+            $intervalle = $heureDebut->diff($heureFin);// Sers a calculer l'itervalle entre l'heure de début et de fin 
+
             //Convertir cette intervalle en heure total
             $heureTotales = $intervalle->h + ($intervalle->i / 60);
-// dd($heureTotales);
+
             if($heureTotales > 8){
+                //Cette parti de code permet de s'assurer que le nombre d'heure de travail ne dépasse pas 8h
                 $this->addFlash('error', 'La duré total de travail dépasse 8h.');
 
                 return $this->render('user/ajouter_user.html.twig', [
                     'formUser' => $form->createView()
                 ]);
             }
+            $joursTravail = $user->getJourTravail($jour);
+
+            $nombreJourTravail = count($joursTravail); //Cette fonction sers a compter le nombre de jour qui se trouve dans le tableau $jour
             
+            if($nombreJourTravail > 5){
+                //Cette parti du code permet de s'assurer que le nombre de jour ne dépasser pas 5 jour si sa dépasser un message s'affiche
+                $this->addFlash('error', 'Le jour de travail total ne peut pas dépasser 5 jour');
+
+                return $this->render('user/ajouter_user.html.twig', [
+                    'formUser' => $form->createView()
+                ]);
+            }
+          
             $em->persist($user);
 
             $em->flush();
@@ -135,7 +159,7 @@ class UserController extends AbstractController
     }
 
     #[Route("/modifier/{id}", name:"modifier_user")]
-    public function modifier_user(int $id, Request $request, User $user, EntityManagerInterface $em): Response
+    public function modifier_user(Request $request, User $user, EntityManagerInterface $em): Response
     {
       
     
@@ -156,6 +180,13 @@ class UserController extends AbstractController
         $badge = $form->get('badge')->getData();
         $age = $form->get('age')->getData();
         $contrat = $form->get('contrat')->getData();
+        $heureDebut = $form->get('horaireDebut')->getData();
+        $heureFin = $form->get('horaireFin')->getData();
+        $debut = $form->get('dateDebut')->getData();
+        $fin = $form->get('dateFin')->getData(); 
+        $jour = $form->get('jourTravail')->getData();
+        
+
 
         $user->setEmail($email);
         $user->setNom($nom);
@@ -163,7 +194,53 @@ class UserController extends AbstractController
         $user->setBadge($badge);
         $user->setAge($age);
         $user->setContrat($contrat);
+        $user->setHoraireDebut($heureDebut);
+        $user->setHoraireFin($heureFin);
+        $user->setDateDebut($debut);
+        $user->setDateFin($fin);
+        $user->setJourTravail($jour);
+        
+        // dd($user);
 
+        if($age === "no"){
+            //Ce code permet de vérifier si l'employer qui est ajouté est mineur si il est mineur et que l'heure début se trouve avant 6h et l'heure de fin se trouve après 21h
+            //un message s'affcihe disant que l'employer est mineur 
+            $heureDebut = $form->get('horaireDebut')->getData();
+            $heureFin = $form->get('horaireFin')->getData();
+
+            if($heureDebut->format('H:i') < '06:00' || $heureFin->format('H:i') > '21:00'){
+                $this->addFlash('error', 'L\'employer est mineur il ne peut donc pas travailler avant 06h00 et après 21h00.');
+
+                return $this->render('user/modifier_user.html.twig', [
+                    'form' => $form->createView()
+                ]);
+            }
+        }
+        $intervalle = $heureDebut->diff($heureFin);// Sers a calculer l'itervalle entre l'heure de début et de fin 
+
+            //Convertir cette intervalle en heure total
+            $heureTotales = $intervalle->h + ($intervalle->i / 60);
+
+            if($heureTotales > 8){
+                //Cette parti de code permet de s'assurer que le nombre d'heure de travail ne dépasse pas 8h
+                $this->addFlash('error', 'La duré total de travail dépasse 8h.');
+
+                return $this->render('user/modifier_user.html.twig', [
+                    'form' => $form->createView()
+                ]);
+            }
+            $joursTravail = $user->getJourTravail($jour);
+
+            $nombreJourTravail = count($joursTravail); //Cette fonction sers a compter le nombre de jour qui se trouve dans le tableau $jour
+
+            if($nombreJourTravail > 5){
+                //Cette parti du code permet de s'assurer que le nombre de jour ne dépasser pas 5 jour si sa dépasser un message s'affiche
+                $this->addFlash('error', 'Le jour de travail total ne peut pas dépasser 5 jour');
+
+                return $this->render('user/modifier_user.html.twig', [
+                    'form' => $form->createView()
+                ]);
+            }
         $em->persist($user);
         $em->flush();
 
@@ -172,31 +249,26 @@ class UserController extends AbstractController
         return $this->redirectToRoute('employer');
       }
       return $this->render("user/modifier_user.html.twig", [
-        "form" => $form->createView()
+        "user" => $form->createView()
       ]);
     }
-    #[Route("/delete/{id}", name: "delete_user")]
-    public function delete_user($id, UserRepository $userRepository, EntityManagerInterface $em): Response
+    #[Route("/{id}", name: "delete_user", methods:['POST'])]
+    public function delete(int $id, User $user, EntityManagerInterface $entityManager, Request $request): Response
     {
 
         
-        $user = $userRepository->find($id);
-
-        if(!$user){
-            //On affiche les message d'erreur si l'utilisateur n'existe pas
-            return new Response("L'utilisateur n'existe pas.");
+        
+        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
+            $entityManager->remove($user);
+            $entityManager->flush();
         }
 
-        
-        //Si il existe on le supprime
-        $em->remove($user);
-
-        $em->flush();
-
-        // return new Response("Utilisateur supprimer avec succès.", 200);
-
-        return $this->redirectToRoute("employer", []);
+        return $this->redirectToRoute('employer', [], Response::HTTP_SEE_OTHER);
     }
+
+        
+
+    
 
     #[Route("/user", name: "user")]
     public function user(): Response
@@ -212,6 +284,15 @@ class UserController extends AbstractController
         $user = $this->getUser();
        
         return $this->render('profil/information.html.twig', [
+            'user' => $user
+        ]);
+    }
+
+    #[Route("/afficher/{id}", name: "afficher_user", methods: ['GET'])]
+    public function afficher(User $user): Response
+    {
+       
+        return $this->render('user/afficher_user.html.twig', [
             'user' => $user
         ]);
     }

@@ -68,11 +68,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $dateFin = null;
 
-    
+    #[ORM\Column(type: Types::SIMPLE_ARRAY)]
+    private array $jourTravail = [];
+
+    #[ORM\ManyToMany(targetEntity: Boutique::class, inversedBy: 'users')]
+    private Collection $boutique;
 
     public function __construct()
     {
-        
+        $this->boutique = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -306,6 +310,51 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getJourTravail(): array
+    {
+        return $this->jourTravail;
+    }
+
+    public function setJourTravail(array $jourTravail): static
+    {
+        $this->jourTravail = $jourTravail;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Boutique>
+     */
+    public function getBoutique(): Collection
+    {
+        return $this->boutique;
+    }
+
+    public function addBoutique(Boutique $boutique): static
+    {
+        if (!$this->boutique->contains($boutique)) {
+            $this->boutique->add($boutique);
+        }
+
+        return $this;
+    }
+
+    public function removeBoutique(Boutique $boutique): static
+    {
+        $this->boutique->removeElement($boutique);
+
+        return $this;
+    }
+
+    
+
+   
+    
+
+    
+
+    
 
   
 

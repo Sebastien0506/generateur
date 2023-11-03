@@ -28,7 +28,8 @@
        <td>{{user.contrat ? user.contrat.typeContrat : 'Pas de contrat' }}</td>
        <td>
           <a href="{{ path('modifier_user', {'id': user.id}) }}">Modifier</a>
-          <a href="{{ path('delete_user', {'id': user.id}) }}">Supprimer</a>
+          <a href="{{ path('afficher_user', {'id': user.id}) }}">Afficher</a>
+          
        </td>
     </tr>
 

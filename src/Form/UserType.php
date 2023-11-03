@@ -2,14 +2,17 @@
 
 namespace App\Form;
 
+use App\Entity\Boutique;
 use App\Entity\User;
 use App\Entity\Contrat;
 use App\Form\ContratType;
+use Doctrine\ORM\Mapping\Entity;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 
@@ -171,7 +174,39 @@ class UserType extends AbstractType
                 }
                
             })
+           
+            
+                ->add('jourTravail', ChoiceType::class, [
+                    'label' => 'Jour de travail',
+                    'choices' => [
+                        'Lundi' => 'Lundi',
+                        'Mardi' => 'Mardi',
+                        'Mercredi' => 'Mercredi',
+                        'Jeudi' => 'Jeudi',
+                        'Vendredi' => 'Vendredi',
+                        'Samedi' => 'Samedi',
+                        'Dimanche' => 'Dimanche',
+
+                    ],
+                    'multiple' => true,
+                    'expanded' => true,
+
+                ])
+                ->add('boutique', EntityType::class, [
+                    'class' => Boutique::class,
+                    'choice_label' => 'nom_boutique',
+                    'multiple' => true,
+                    'expanded' => true,
+                    'constraints' => [
+                        new NotBlank([
+                            'message' => 'Veuillez séléctionner la boutique'
+                        ]),
+                    ]
+                   
+                ])
             ->getForm();
+           
+            
             
         ;
     }

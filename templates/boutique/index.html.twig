@@ -19,8 +19,8 @@
         {% for boutique in boutiques %}
             <tr>
                 <td>{{ boutique.nomBoutique }}</td>
-                <td>{{ boutique.horaireOuverture }}</td>
-                <td>{{ boutique.horaireFermeture }}</td>
+                <td>{{ boutique.horaireDebut|date('H:i:s') }}</td>
+                <td>{{ boutique.horaireFin|date('H:i:s') }}</td>
                 <td>
                     <a href="{{ path('app_boutique_show', {'id': boutique.id}) }}">information</a>
                     <a href="{{ path('app_boutique_edit', {'id': boutique.id}) }}">editer</a>

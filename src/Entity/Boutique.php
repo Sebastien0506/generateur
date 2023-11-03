@@ -3,6 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\BoutiqueRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BoutiqueRepository::class)]
@@ -16,11 +19,21 @@ class Boutique
     #[ORM\Column(length: 255)]
     private ?string $nom_boutique = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $horaire_ouverture = null;
+   
 
-    #[ORM\Column(length: 255)]
-    private ?string $horaire_fermeture = null;
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'boutique')]
+    private Collection $users;
+
+    #[ORM\Column(type: Types::TIME_MUTABLE)]
+    private ?\DateTimeInterface $horaireDebut = null;
+
+    #[ORM\Column(type: Types::TIME_MUTABLE)]
+    private ?\DateTimeInterface $horaireFin = null;
+
+    public function __construct()
+    {
+        $this->users = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -39,26 +52,57 @@ class Boutique
         return $this;
     }
 
-    public function getHoraireOuverture(): ?string
+    
+
+    
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
     {
-        return $this->horaire_ouverture;
+        return $this->users;
     }
 
-    public function setHoraireOuverture(string $horaire_ouverture): static
+    public function addUser(User $user): static
     {
-        $this->horaire_ouverture = $horaire_ouverture;
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->addBoutique($this);
+        }
 
         return $this;
     }
 
-    public function getHoraireFermeture(): ?string
+    public function removeUser(User $user): static
     {
-        return $this->horaire_fermeture;
+        if ($this->users->removeElement($user)) {
+            $user->removeBoutique($this);
+        }
+
+        return $this;
     }
 
-    public function setHoraireFermeture(string $horaire_fermeture): static
+    public function getHoraireDebut(): ?\DateTimeInterface
     {
-        $this->horaire_fermeture = $horaire_fermeture;
+        return $this->horaireDebut;
+    }
+
+    public function setHoraireDebut(\DateTimeInterface $horaireDebut): static
+    {
+        $this->horaireDebut = $horaireDebut;
+
+        return $this;
+    }
+
+    public function getHoraireFin(): ?\DateTimeInterface
+    {
+        return $this->horaireFin;
+    }
+
+    public function setHoraireFin(\DateTimeInterface $horaireFin): static
+    {
+        $this->horaireFin = $horaireFin;
 
         return $this;
     }

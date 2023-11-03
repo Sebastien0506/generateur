@@ -13,11 +13,11 @@
             </tr>
             <tr>
                 <th>Horaire d'ouverture</th>
-                <td>{{ boutique.horaireOuverture }}</td>
+                <td>{{ boutique.horaireDebut|date('H:i:s') }}</td>
             </tr>
             <tr>
                 <th>Horaire de fermeture</th>
-                <td>{{ boutique.horaireFermeture }}</td>
+                <td>{{ boutique.horaireFin|date('H:i:s') }}</td>
             </tr>
         </tbody>
     </table>
