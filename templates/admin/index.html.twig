@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Back-Office{% endblock %}
+
+{% block body %}
+
+
+
+    
+    <ul class="back">
+        <li><a href="{{ path('ajouter_user') }}">Ajouter un employer</a></li>
+        <li><a href="{{ path('employer') }}">Gérer les employers</a></li>
+        <li><a href="{{ path('ajouter_contrat') }}">Ajouter des contrats</a></li>
+        <li><a href="{{ path('ajouter_contrat') }}">Ajouter des contrats</a></li>
+        <li><a href="{{ path('app_boutique_index') }}">Gérez les Boutiques</a></li>
+        <li><a href="{{ path('cookie_description_new')}}">Cookie</a></li>
+    </ul>
+
+{% endblock %}

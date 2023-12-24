@@ -1,0 +1,20 @@
+{% extends "base.html.twig" %}
+
+{% block h1 %}Cookie{% endblock %}
+
+{% block body %}
+
+
+     {% for cookieDescription in cookieDescriptions %}
+        <div class="cookieDescription">
+           {{cookieDescription.description}}
+        </div>
+     {% endfor %}
+
+
+
+
+
+
+
+{% endblock %}

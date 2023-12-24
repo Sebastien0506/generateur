@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello NotificationController!{% endblock %}
+
+{% block h1 %}Demande de vacances{% endblock %}
+{% block body %}
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="flash-{{ label }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+{% for notification in notifications %}
+    <div class="d-flex flex-column mt-4 bg-light text-center">
+    {% if notification.message %}
+       {{ notification.message }}
+    {% else %}
+       <p>pas de notification pour cette vacance</p>
+    {% endif %}
+        <a href="{{ path('accept_vacation', {'id': notification.vacance.id}) }}">Accepter</a>
+    {% if notification and notification.vacance %}
+        <form method="post" action="{{ path('delete_vacation', {'id': notification.vacance.id}) }}" onsubmit="return confirm('Ête vous sur de vouloir supprimer cette demande de vacance ?')">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ notification.vacance.id) }}">
+            <button type="submit">Refuser</button>
+        </form>
+    {% endif %}
+    </div> 
+{% endfor %}
+
+{% endblock %}

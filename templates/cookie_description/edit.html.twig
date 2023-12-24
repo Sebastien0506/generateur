@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit CookieDescription{% endblock %}
+
+{% block body %}
+    <h1>Edit CookieDescription</h1>
+
+    {{ include('cookie_description/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_cookie_description_index') }}">back to list</a>
+
+    {{ include('cookie_description/_delete_form.html.twig') }}
+{% endblock %}

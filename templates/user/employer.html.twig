@@ -1,0 +1,42 @@
+{% extends "base.html.twig" %}
+
+{% block h1 %}Employer{% endblock %}
+
+{% block body %}
+
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Nom</th>
+      <th scope="col">Prenom</th>
+      <th scope="col">Email</th>
+      <th scope="col">Majeur</th>
+      <th scope="col">Badge</th>
+      <th scope="col">Contrat</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in users %}
+    <tr>
+       <td>{{user.nom}}</td>
+       <td>{{user.prenom}}</td>
+       <td>{{user.email}}</td>
+       <td>{{user.age}}</td>
+       <td>{{user.badge}}</td>
+       <td>{{user.contrat ? user.contrat.typeContrat : 'Pas de contrat' }}</td>
+       <td>
+          <a href="{{ path('modifier_user', {'id': user.id}) }}">Modifier</a>
+          <a href="{{ path('afficher_user', {'id': user.id}) }}">Afficher</a>
+          
+       </td>
+    </tr>
+
+    {% endfor %}
+    
+  </tbody>
+</table>
+
+
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}CookieDescription{% endblock %}
+
+{% block body %}
+    <h1>CookieDescription</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ cookie_description.id }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ cookie_description.description }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_cookie_description_index') }}">back to list</a>
+
+    <a href="{{ path('app_cookie_description_edit', {'id': cookie_description.id}) }}">edit</a>
+
+    {{ include('cookie_description/_delete_form.html.twig') }}
+{% endblock %}

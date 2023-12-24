@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New CookieDescription{% endblock %}
+
+{% block body %}
+    <h1>Create new CookieDescription</h1>
+
+    {{ include('cookie_description/_form.html.twig') }}
+
+    <a href="{{ path('app_cookie_description_index') }}">back to list</a>
+{% endblock %}

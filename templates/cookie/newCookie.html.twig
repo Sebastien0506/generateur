@@ -1,0 +1,21 @@
+{% extends "base.html.twig" %}
+
+{% block h1 %}Description des cookies{% endblock %}
+
+{% block body %}
+     {{ form_start(formCookie) }}
+           {{ form_label(formCookie.description)}}
+           {{ form_widget(formCookie.description)}}
+           {{ form_help(formCookie.description)}}
+           {{ form_errors(formCookie.description)}}
+           
+
+        <button type="submit">Enregistrer</button>
+     {{ form_end(formCookie) }}
+
+
+
+
+
+
+{% endblock %}
