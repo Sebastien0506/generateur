@@ -38,11 +38,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
        {% block body %}{% endblock %}
     </main>
     <footer>
-        <a href="#" id="modify_cookie">Modifier les cookies</a>
+        <a href="{{ path('changed_cookie_consent') }}">Modifier les cookies</a>
 
-        <div id="cookie_form" style="display: none;">
-               {{ render(path('ch_cookie_consent.show')) }}
-        </div>
+       
     </footer>
 
     <script src="{{ asset('js/javascript.js')}}"></script>

@@ -74,6 +74,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Boutique::class, inversedBy: 'users')]
     private Collection $boutique;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $presse = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $livraison = null;
+
+    
+
+    
+
     public function __construct()
     {
         $this->boutique = new ArrayCollection();
@@ -346,6 +356,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getPresse(): ?string
+    {
+        return $this->presse;
+    }
+
+    public function setPresse(?string $presse): static
+    {
+        $this->presse = $presse;
+
+        return $this;
+    }
+
+    public function getLivraison(): ?string
+    {
+        return $this->livraison;
+    }
+
+    public function setLivraison(?string $livraison): static
+    {
+        $this->livraison = $livraison;
+
+        return $this;
+    }
+
+   
+
+    
 
     
 

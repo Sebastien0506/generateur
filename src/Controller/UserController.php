@@ -39,7 +39,7 @@ class UserController extends AbstractController
 
     #[Route("/ajouter_user", name: "ajouter_user")]
     public function ajouter_employer(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $userPasswordHasher, MailerInterface $mailer): Response
-    {
+    {   // Ce code permet d'ajouter un employer
         $user = new User;
 
         $form = $this->createForm(UserType::class);
@@ -62,7 +62,8 @@ class UserController extends AbstractController
             $debut = $form->get('dateDebut')->getData();
             $fin = $form->get('dateFin')->getData();
             $jour = $form->get('jourTravail')->getData();
-            
+            $presse = $form->get('presse')->getData();
+            $livraison = $form->get('livraison')->getData();
             
             $user->setEmail($email);
             $user->setRoles([$role]);
@@ -82,6 +83,8 @@ class UserController extends AbstractController
             $user->setDateDebut($debut);
             $user->setDateFin($fin);
             $user->setJourTravail($jour);
+            $user->setPresse($presse);
+            $user->setLivraison($livraison);
             
             foreach($form->get('boutique')->getData() as $boutique){
                 $user->addBoutique($boutique);
@@ -105,7 +108,7 @@ class UserController extends AbstractController
                     ]);
                 }
             }
-            $intervalle = $heureDebut->diff($heureFin);// Sers a calculer l'itervalle entre l'heure de début et de fin 
+            $intervalle = $heureDebut->diff($heureFin);// Sers a calculer l'intervalle entre l'heure de début et de fin 
 
             //Convertir cette intervalle en heure total
             $heureTotales = $intervalle->h + ($intervalle->i / 60);
@@ -162,9 +165,9 @@ class UserController extends AbstractController
     public function modifier_user(Request $request, User $user, EntityManagerInterface $em): Response
     {
       
-    
+    // Ce code permet de modifier un employer
    
-    if(!$user){
+    if(!$user){ // Permet de vérifier si un employer existe, si il existe pas on renvoi un message 
         throw $this->createNotFoundException(('Employer non trouvé'));
     }
 

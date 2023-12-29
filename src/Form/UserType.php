@@ -48,7 +48,7 @@ class UserType extends AbstractType
                     "User" => 'ROLE_USER',
                     
                 ],
-                'expanded' => true,
+                
                 'multiple' => false,
                 'mapped' => false,
                 
@@ -99,7 +99,7 @@ class UserType extends AbstractType
                     "Oui" => "yes",
                     "Non" => "no",
                 ],
-                "expanded" => true,
+                
                 "mapped" => false,
             ])
             ->add('age', ChoiceType::class, [
@@ -108,13 +108,13 @@ class UserType extends AbstractType
                     "Oui" => "yes",
                     "Non" => "no",
                 ],
-                "expanded" => true,
+                
                 "mapped" => false,
             ])
             ->add('contrat', EntityType::class, [
                 'class' => Contrat::class,
                 'choice_label' => 'type_contrat',
-                "expanded" => true,
+                'expanded' => true,
                 "constraints" => [
                    new NotBlank([
                     "message" => "Veuillez selectionner un contrat."
@@ -136,6 +136,21 @@ class UserType extends AbstractType
                         'message' => "Veuillez saisir une heure de fin."
                     ])
                 ]
+            ])
+            ->add('presse', ChoiceType::class, [
+                'label' => "L'employer va-t-il faire de la presse ?",
+                'choices' => [
+                    'Oui' => 'yes',
+                    'Non' => 'no',
+                ],
+                
+            ])
+            ->add('livraison', ChoiceType::class, [
+                'label' => "L'employer va-t-il receptionner de la marchandise ?",
+                'choices' => [
+                    "Oui" => "yes",
+                    'Non' => 'no',
+                ], 
             ])
             ->add('dateDebut', DateType::class)
             ->add('dateFin', DateType::class)
@@ -205,7 +220,7 @@ class UserType extends AbstractType
                    
                 ])
             ->getForm();
-           
+            
             
             
         ;

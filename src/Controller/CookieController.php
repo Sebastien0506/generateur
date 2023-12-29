@@ -79,4 +79,10 @@ class CookieController extends AbstractController
             
         ]);
     }
+
+    #[Route("changed_cookie", name:"changed_cookie_consent")]
+    public function changedCookieConsent(): Response
+    {
+        return $this->render('cookie/changeCookieConsent.html.twig', []);
+    }
 }
